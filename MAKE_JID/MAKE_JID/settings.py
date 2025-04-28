@@ -38,8 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'base.apps.BaseConfig',
+    'MAKE_jid.base',
+    
 ]
+
+
+AUTH_USER_MODEL = 'base.Account'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -51,7 +56,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'MAKE_JID.urls'
+ROOT_URLCONF = 'MAKE_jid.make_JID.urls'
+
 
 TEMPLATES = [
     {
@@ -68,7 +74,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'MAKE_JID.wsgi.application'
+WSGI_APPLICATION = 'MAKE_jid.make_JID.wsgi.application'
+
 
 
 # Database
@@ -122,3 +129,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ASGI_APPLICATION = 'MAKE_jid.make_JID.asgi.application'
+
