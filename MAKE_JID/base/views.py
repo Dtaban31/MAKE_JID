@@ -1,11 +1,6 @@
-from django.shortcuts import render
-
-# Create your views here.
-
-# base/views.py
-
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .forms import EventForm
+from .forms import EventForm, SignUpForm
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -21,3 +16,16 @@ def create_event(request):
         form = EventForm()
 
     return render(request, 'base/create_event.html', {'form': form})
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # after signup, send them to login page
+    else:
+        form = SignUpForm()
+    return render(request, 'base/signup.html', {'form': form})
+
+def home(request):
+    return render(request, 'base/home.html')
