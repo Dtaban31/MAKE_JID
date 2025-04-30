@@ -17,7 +17,7 @@ def signup_view(request):
             return redirect('home')  # Redirect to the home page after signup
     else:
         form = SignupForm()
-    return render(request, 'base/signup.html', {'form': form})
+    return render(request, 'signup.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -27,13 +27,14 @@ def login_view(request):
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user is not None:
-                login(request, user)
-                return redirect('home')
+                login(request, user)  # Log the user in if credentials are correct
+                return redirect('home')  # Redirect to the home page after login
             else:
+                # Add an error message if authentication fails
                 form.add_error(None, 'Invalid username or password.')
     else:
         form = LoginForm()
-    return render(request, 'base/login.html', {'form': form})  # Use the correct path
+    return render(request, 'login.html', {'form': form})
 
 def create_event(request):
     return render(request, 'base/create_event.html')

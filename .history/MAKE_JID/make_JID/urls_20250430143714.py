@@ -10,6 +10,7 @@ def clubs(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('MAKE_jid.base.urls')),  # This now handles the root ('/') route
-    path('clubs/', lambda request: HttpResponse("THIS IS WHERE THE LISTS OF CLUBS GO")),  # optional test page
+    path('', home),              # your homepage
+    path('clubs/', clubs),       # temporary test page
+    path('base/', include('MAKE_jid.base.urls')),
 ]

@@ -17,7 +17,7 @@ def signup_view(request):
             return redirect('home')  # Redirect to the home page after signup
     else:
         form = SignupForm()
-    return render(request, 'base/signup.html', {'form': form})
+    return render(request, 'signup.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':

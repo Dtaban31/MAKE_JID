@@ -1,0 +1,9 @@
+<!-- base/templates/base/create_event.html -->
+
+<h2>Create Event</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
