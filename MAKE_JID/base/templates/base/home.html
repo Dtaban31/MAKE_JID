@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - MAKE JID</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to OrgFinder!</h1>
+            <nav>
+                <a href="{% url 'signup' %}">Sign Up</a>
+                <a href="{% url 'login' %}">Login</a>
+            </nav>
+        </header>
+        <main>
+            <h2>Home Page</h2>
+            <p>Welcome to the homepage. From here, you can sign up or log in to your account.</p>
+        </main>
+    </div>
+</body>
+</html>
