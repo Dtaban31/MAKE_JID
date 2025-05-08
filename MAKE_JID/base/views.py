@@ -1,36 +1,77 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from .forms import SignupForm, LoginForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from .models import Post, RSVP
+from .forms import LoginForm, SignupForm
 
-def home_view(request):
-    return render(request, 'base/home.html')
 
-def signup_view(request):
+# Home Page View
+def home(request):
+    """
+    Displays all posts (events) on the homepage.
+    Includes login/signup forms if the user is not authenticated.
+    """
+    posts = Post.objects.all()  # Fetch all events (posts)
+    login_form = LoginForm()
+    signup_form = SignupForm()
+
+    # Build a dictionary to track which posts the user RSVP'd to
+    user_rsvps = set()
+    if request.user.is_authenticated:
+        user_rsvps = set(
+            RSVP.objects.filter(user=request.user).values_list('post_id', flat=True)
+        )
+
+    return render(request, 'base/home.html', {
+        'posts': posts,
+        'login_form': login_form,
+        'signup_form': signup_form,
+        'user_rsvps': user_rsvps,  # Pass RSVP data to template
+    })
+
+
+
+# RSVP View
+@login_required
+def rsvp(request, post_id):
+    """
+    Allows a logged-in user to RSVP to a specific post (event).
+    If already RSVP'd, no duplicate RSVP is created.
+    """
+    post = get_object_or_404(Post, id=post_id)  # Fetch the specific event
+    RSVP.objects.get_or_create(user=request.user, post=post)  # Track RSVP
+    return redirect('home')  # Redirect back to the homepage
+
+
+# Login/Signup Logic in One View
+def login_signup_view(request):
+    """
+    Processes login and signup actions on the homepage.
+    Handles two forms: LoginForm and SignupForm.
+    If valid, redirects the user to the homepage.
+    """
+    login_form = LoginForm()
+    signup_form = SignupForm()
+
     if request.method == 'POST':
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('home')
-    else:
-        form = SignupForm()
-    return render(request, 'base/signup.html', {'form': form})
-
-def login_view(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
+        # Handle login form submission
+        if 'login' in request.POST:
+            login_form = LoginForm(data=request.POST)
+            if login_form.is_valid():
+                user = login_form.get_user()
                 login(request, user)
                 return redirect('home')
-            else:
-                form.add_error(None, 'Invalid username or password.')
-    else:
-        form = LoginForm()
-    return render(request, 'base/login.html', {'form': form})
 
-def create_event(request):
-    return render(request, 'base/create_event.html')
+        # Handle signup form submission
+        elif 'signup' in request.POST:
+            signup_form = SignupForm(data=request.POST)
+            if signup_form.is_valid():
+                # Create a new user and log them in
+                user = signup_form.save()
+                login(request, user)
+                return redirect('home')
+
+    return render(request, 'base/home.html', {  # UPDATED PATH
+        'login_form': login_form,
+        'signup_form': signup_form,
+    })

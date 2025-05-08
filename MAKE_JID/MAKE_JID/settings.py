@@ -14,7 +14,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'MAKE_JID.base',
+
+    'MAKE_JID.base',  # Correct app path
 ]
 
 AUTH_USER_MODEL = 'base.Account'
@@ -34,7 +35,7 @@ ROOT_URLCONF = 'MAKE_JID.MAKE_JID.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'base' / 'templates'],
+        'DIRS': [BASE_DIR / "base" / "templates"],  # ✅ This is the fix
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -47,8 +48,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'MAKE_JID.MAKE_JID.wsgi.application'
-ASGI_APPLICATION = 'MAKE_JID.MAKE_JID.asgi.application'
+
+WSGI_APPLICATION = 'MAKE_JID.wsgi.application'
+ASGI_APPLICATION = 'MAKE_JID.asgi.application'
 
 DATABASES = {
     'default': {
@@ -72,3 +74,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+WSGI_APPLICATION = 'MAKE_JID.MAKE_JID.wsgi.application'
+

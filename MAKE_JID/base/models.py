@@ -1,35 +1,25 @@
-# base/models.py
-from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-# Custom user model
+# Your custom Account model
 class Account(AbstractUser):
-    # You can override fields or add new ones here
-    groups = models.ManyToManyField(
-        Group,
-        related_name='account_set',  # Change from 'user_set'
-        blank=True,
-        help_text=AbstractUser._meta.get_field('groups').help_text,
-        verbose_name=AbstractUser._meta.get_field('groups').verbose_name,
-        related_query_name='account',
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        related_name='account_set',  # Change from 'user_set'
-        blank=True,
-        help_text=AbstractUser._meta.get_field('user_permissions').help_text,
-        verbose_name=AbstractUser._meta.get_field('user_permissions').verbose_name,
-        related_query_name='account',
-    )
+    # You can add custom fields here if you want
+    # Example: bio = models.TextField(blank=True)
+    pass
 
-# Event model
-class Event(models.Model):
-    title = models.CharField(max_length=100)
+class Post(models.Model):
+    title = models.CharField(max_length=200)
     description = models.TextField()
-    date = models.DateTimeField()
-    time = models.TimeField()
-    location = models.CharField(max_length=200)
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='events')  # Link event to Account
+    event_date = models.DateTimeField()
+    created_by = models.ForeignKey(Account, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
+
+class RSVP(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} RSVP'd to {self.post.title}"

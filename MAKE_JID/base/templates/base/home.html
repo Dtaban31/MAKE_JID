@@ -1,25 +1,60 @@
-{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - MAKE JID</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Event Manager</title>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Welcome to OrgFinder!</h1>
-            <nav>
-                <a href="{% url 'signup' %}">Sign Up</a>
-                <a href="{% url 'login' %}">Login</a>
-            </nav>
-        </header>
-        <main>
-            <h2>Home Page</h2>
-            <p>Welcome to the homepage. From here, you can sign up or log in to your account.</p>
-        </main>
-    </div>
+    <header>
+        <h1>Event Manager</h1>
+        {% if user.is_authenticated %}
+            <p>Welcome, {{ user.username }}! <a href="{% url 'logout' %}">Logout</a></p>
+        {% else %}
+            <!-- Login Form -->
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                {{ login_form.as_p }}
+                <button type="submit" name="login">Login</button>
+            </form>
+
+            <!-- Signup Form -->
+            <form method="POST" action="{% url 'signup' %}">
+                {% csrf_token %}
+                {{ signup_form.as_p }}
+                <button type="submit" name="signup">Sign Up</button>
+            </form>
+        {% endif %}
+    </header>
+
+    <main>
+        <h2>Upcoming Events</h2>
+        <ul>
+            {% for post in posts %}
+                <li>
+                    <h3>{{ post.title }}</h3>
+                    <p>{{ post.content }}</p>
+                    <p>Date: {{ post.event_date }}</p>
+                    <p>Organizer: {{ post.created_by.username }}</p>
+                    {% if user.is_authenticated %}
+                        {% if post.rsvps.filter(user=user).exists %}
+                            <p>You have RSVP'd to this event.</p>
+                        {% else %}
+                            <form action="{% url 'rsvp' post.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit">RSVP</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <p><a href="#signup">Log in to RSVP for this event.</a></p>
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li>No events available currently. Please check back later!</li>
+            {% endfor %}
+        </ul>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'create_post' %}">Create a New Event</a>
+        {% endif %}
+    </main>
 </body>
 </html>
